@@ -10,6 +10,8 @@
 	                curl_get_contents()
 */
 
+echo  "<a target='_blank' href='https://github.com/Shadow12587/AS18'> GITHUB REPO </a>";
+
 main();
 
 #-----------------------------------------------------------------------------
@@ -22,7 +24,8 @@ function main () {
 	// $json_string = file_get_contents($apiCall); 
 	$json_string = curl_get_contents($apiCall);
 	$obj = json_decode($json_string);
-	$data = $obj->Global->NewConfirmed;
+	$data = $obj->Countries->TotalDeaths;
+    rsort($data);
 
 	// echo html head section
 	echo '<html>';
