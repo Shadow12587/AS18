@@ -1,27 +1,7 @@
 <?php 
-/*
-	filename 	: cis355api.php
-	author   	: george corser
-	course   	: cis355 (winter2020)
-	description	: demonstrate JSON API functions
-				  return number of new covid19 cases
-	input    	: https://api.covid19api.com/summary
-	functions   : main()
-	                curl_get_contents()
-*/
 
-echo  "<a target='_blank' href='https://github.com/Shadow12587/AS18'> GITHUB REPO </a><br><br>";
-
-main();
-
-#-----------------------------------------------------------------------------
-# FUNCTIONS
-#-----------------------------------------------------------------------------
 function main () {
-	
-	$apiCall = 'https://api.covid19api.com/summary';
-	// line below stopped working on CSIS server
-	// $json_string = file_get_contents($apiCall); 
+    $apiCall = 'https://api.covid19api.com/summary';
 	$json_string = curl_get_contents($apiCall);
 	$obj = json_decode($json_string);
 
@@ -36,38 +16,15 @@ function main () {
 
     array_multisort($arr2, SORT_DESC, $arr1);
 
-    for ($x = 0; $x <= 10; $x++) {
-        array_push($arr3, $arr1[$x]); 
+    for ($x = 0; $x < 10; $x++) {
+        array_push($arr3, Array($arr1[$x], $arr2[$x])); 
     }
 
-    json_encode($arr3);
-
-    //Code Gotten from: https://www.w3schools.com/js/tryit.asp?filename=tryjson_php_db_loop
-    echo '<script>
-    var obj, dbParam, xmlhttp, myObj, x, txt = "";
-    obj = { "limit":10 };
-    dbParam = JSON.stringify(obj);
-    xmlhttp = new XMLHttpRequest();
-    xmlhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-        myObj = JSON.parse(this.responseText);
-        for (x in myObj) {
-        txt += myObj[x].name + "<br>";
-        }
-        document.getElementById("demo").innerHTML = txt;
-    }
-    };
-    var api = "https://api.covid19api.com/summary";
-    xmlhttp.open("GET", api, true);
-    xmlhttp.send();
-    </script> ';
-	
-
+    header('Content-type: application/json');
+    echo json_encode($arr3);
+    
 }
 
-
-#-----------------------------------------------------------------------------
-// read data from a URL into a string
 function curl_get_contents($url) {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -78,4 +35,7 @@ function curl_get_contents($url) {
     curl_close($ch);
     return $data;
 }
-?>
+
+main();
+
+?> 
