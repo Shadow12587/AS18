@@ -10,7 +10,7 @@
 	                curl_get_contents()
 */
 
-echo  "<a target='_blank' href='https://github.com/Shadow12587/AS18'> GITHUB REPO </a>";
+echo  "<a target='_blank' href='https://github.com/Shadow12587/AS18'> GITHUB REPO </a><br><br>";
 
 main();
 
@@ -24,53 +24,45 @@ function main () {
 	// $json_string = file_get_contents($apiCall); 
 	$json_string = curl_get_contents($apiCall);
 	$obj = json_decode($json_string);
-	$data = $obj->Countries->TotalDeaths;
-    rsort($data);
 
-	// echo html head section
-	echo '<html>';
-	echo '<head>';
-	echo '	<link rel="icon" href="img/cardinal_logo.png" type="image/png" />';
-	echo '</head>';
+	$arr1 = Array();
+    $arr2 = Array();
+    $arr3 = Array();
+    
+    foreach($obj->Countries as $i) {
+        array_push($arr1, $i->Country);
+        array_push($arr2, $i->TotalDeaths);
+    } 
+
+    array_multisort($arr2, SORT_DESC, $arr1);
+
+    for ($x = 0; $x <= 10; $x++) {
+        array_push($arr3, $arr1[$x]); 
+    }
+
+    json_encode($arr3);
+
+    //Code Gotten from: https://www.w3schools.com/js/tryit.asp?filename=tryjson_php_db_loop
+    echo '<script>
+    var obj, dbParam, xmlhttp, myObj, x, txt = "";
+    obj = { "limit":10 };
+    dbParam = JSON.stringify(obj);
+    xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        myObj = JSON.parse(this.responseText);
+        for (x in myObj) {
+        txt += myObj[x].name + "<br>";
+        }
+        document.getElementById("demo").innerHTML = txt;
+    }
+    };
+    var api = "https://api.covid19api.com/summary";
+    xmlhttp.open("GET", api, true);
+    xmlhttp.send();
+    </script> ';
 	
-	// open html body section
-	echo '<body onload="loadDoc()">';
-	
-	echo '<div>';
-	$myObjString = '{"newCases1":' . $data . '}' ;
-	echo $myObjString;
-	echo '</div>';
-	
-	echo '<div>';
-	$myArray = array("newCases2"=>$data) ;
-	// $myArray = array("newCases2"=>array("A"=>1, "B"=>2)) ;
-	echo json_encode($myArray);
-	echo '</div>';
-	
-	echo '<div id="demo">';
-	echo '</div>';
-	echo '<script>';
-	echo '
-		var country_usa;
-		function loadDoc() {
-		  var xhttp = new XMLHttpRequest();
-		  xhttp.onreadystatechange = function() {
-			if (this.readyState == 4 && this.status == 200) {
-			  country_usa = JSON.parse(this.responseText).Global.NewConfirmed;
-			  document.getElementById("demo").innerHTML = country_usa;
-			 
-			}
-		  };
-		  var api = "https://api.covid19api.com/summary";
-		  xhttp.open("GET", api, true);
-		  xhttp.send();
-		}
-	';
-	echo '</script>';
-	
-	// close html body section
-	echo '</body>';
-	echo '</html>';
+
 }
 
 
